@@ -12,7 +12,7 @@ from PIL import Image
 class Backpropagation(QWidget):
     def __init__(self):
         super().__init__()
-        self.width = 50 * 50
+        self.width = 0
         self.input_count = 6
         self.output_count = 4
         # Высчитываем количество нейронов скрытой сети
@@ -21,9 +21,9 @@ class Backpropagation(QWidget):
 
         self.hidden_count = math.ceil(math.sqrt(self.input_count * self.output_count)) # количество скрытых нейронов
 
-        self.weights_Layer_1 = np.random.normal(0, 0.2, (self.width, self.input_count))
-        self.weights_Layer_2 = np.random.normal(0, 0.2, (self.input_count, self.hidden_count))
-        self.weights_Layer_output = np.random.normal(0, 0.2, (self.hidden_count, self.output_count))
+        self.weights_0_1 = np.random.normal(0.0, 2 ** -0.5, (self.hidden_count, self.width))
+        # self.weights_Layer_2 = np.random.normal(0, 0.2, (self.input_count, self.hidden_count))
+        self.weights_1_2 = np.random.normal(0.0, 1, (self.output_count, self.hidden_count))
         self.inputs_x = []
         self.baseball = []
         self.archery = []
@@ -32,7 +32,7 @@ class Backpropagation(QWidget):
         self.error_learn = []
         self.error_test = []
         self.count = 0
-        self.iter = 100
+        self.iter = 1000
         self.init_ui()
         self.combo()
 
@@ -108,9 +108,9 @@ class Backpropagation(QWidget):
         self.create_pic(self.broke_swimming, r'pictures/br_swimming.jpg')
         self.create_pic(self.broke_hockey, r'pictures/br_hockey.jpg')
 
-        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, self.input_count))
-        self.weights_Layer_2 = np.random.normal(0, 0.1, (self.input_count, self.hidden_count))
-        self.weights_Layer_output = np.random.normal(0, 0.1, (self.hidden_count, self.output_count))
+        # self.weights_0_1 = np.random.normal(0.0, 2 ** -0.5, (self.hidden_count, self.width))
+        # self.weights_Layer_2 = np.random.normal(0, 0.1, (self.input_count, self.hidden_count))
+        # self.weights_1_2 = np.random.normal(0.0, 1, (self.output_count, self.hidden_count))
 
         self.inputs_x.append(self.archery)
         self.inputs_x.append(self.baseball)
@@ -197,6 +197,9 @@ class Backpropagation(QWidget):
     def quit(self):
         exit()
 
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
     # def activation(self, x, derive=False):
     #     if derive:
     #         i = 1 / (cmath.cosh(x)) ** 2
@@ -204,11 +207,9 @@ class Backpropagation(QWidget):
     #     return cmath.tanh(x).real
     def activation(self, x, derive=False):
         if derive:
-            return np.exp(-x)/((1 + np.exp(-x)) ** 2)
-        return (1 / (1 + np.exp(-x)))
+            return self.sigmoid(x) * (1 - self.sigmoid(x))
+        return self.sigmoid(x)
 
-    def sigmoid(x):
-        return 1 / (1 + np.exp(-x))
 
     # sigmoid_mapper = np.vectorize(sigmoid)  # Для использования векторов
 
@@ -264,7 +265,7 @@ class Backpropagation(QWidget):
                     y1 = np.array([0, 0, 0, 1])
                     s = 0
 
-                layer_1_output, layer_2_output, output2 = self.fow(ele)
+                layer_1_output, output2 = self.fow(ele)
 
                 broken_error = self.fow(self.broke_archery, forward=True)
                 for i in range(len(broken_error)):
@@ -284,7 +285,7 @@ class Backpropagation(QWidget):
 
                 test_error.append(tmp)
                 tmp_error2 += tmp
-                temp = self.learn(ele, layer_1_output, layer_2_output, output2, y1)
+                temp = self.learn(ele, layer_1_output, output2, y1)
                 func_error.append(temp)
                 tmp_error += temp
                 s += 1
@@ -303,23 +304,23 @@ class Backpropagation(QWidget):
     def fow(self, inputs, forward=False):
 
         # Первый слой
-        layer_1_input = np.dot(inputs, self.weights_Layer_1)
+        layer_1_input = np.dot(self.weights_0_1, inputs)
         layer_1_output = np.array([self.activation(x) for x in layer_1_input])
 
-        # Второй слой
-        layer_2_input = np.dot(layer_1_output, self.weights_Layer_2)
-        layer_2_output = np.array([self.activation(x) for x in layer_2_input])
+        # # Второй слой
+        # layer_2_input = np.dot(layer_1_output, self.weights_Layer_2)
+        # layer_2_output = np.array([self.activation(x) for x in layer_2_input])
 
         # Третий слой
-        output = np.dot(layer_2_output, self.weights_Layer_output)
+        output = np.dot(self.weights_1_2, layer_1_output)
         output2 = np.array([self.activation(x) for x in output])
         if forward:
             out = [round(el, 3) for el in output2.real]
             return out
         else:
-            return layer_1_output, layer_2_output, output2
+            return layer_1_output, output2
 
-    def learn(self, inputs, layer_1_output, layer_2_output, output, y):
+    def learn(self, inputs, layer_1_output, output, y):
 
         error = []
         delta = []
@@ -333,33 +334,33 @@ class Backpropagation(QWidget):
             delta.append(error[n] * self.activation(output[n], derive=True))
 
             #  ----------------- Вычисление ошибки скрытого слоя ---------------  #
-        for k in range(len(layer_2_output)):
-            tmp = 0
-            for i in range(len(error)):
-                tmp += delta[i] * self.weights_Layer_output[k][i]
-            delta_1.append(tmp * self.activation(layer_2_output[k], derive=True))
+        # for k in range(len(layer_2_output)):
+        #     tmp = 0
+        #     for i in range(len(error)):
+        #         tmp += delta[i] * self.weights_Layer_output[k][i]
+        #     delta_1.append(tmp * self.activation(layer_2_output[k], derive=True))
 
         for k in range(len(layer_1_output)):
             tmp = 0
             for i in range(len(delta_1)):
-                tmp += delta_1[i] * self.weights_Layer_2[k][i]
+                tmp += delta_1[i] * self.weights_1_2[k][i]
             delta_2.append(tmp * self.activation(layer_1_output[k], derive=True))
 
             # ------------------ Корректировка весовых коэффициентов --------------------- #
         t = 0
-        for el in self.weights_Layer_output:
+        for el in self.weights_1_2:
             for j in range(len(output)):
-                el[j] += layer_2_output[t] * delta[j] * learn_rate
+                el[j] += layer_1_output[t] * delta[j] * learn_rate
             t += 1
 
-        k = 0
-        for el in self.weights_Layer_2:
-            for i in range(len(layer_2_output)):
-                el[i] += layer_1_output[k] * delta_1[i] * learn_rate
-            k += 1
+        # k = 0
+        # for el in self.weights_Layer_2:
+        #     for i in range(len(layer_2_output)):
+        #         el[i] += layer_1_output[k] * delta_1[i] * learn_rate
+        #     k += 1
 
         k = 0
-        for el1 in self.weights_Layer_1:
+        for el1 in self.weights_0_1:
             for o in range(len(layer_1_output)):
                 el1[o] += inputs[k] * delta_2[o] * learn_rate
             k += 1
