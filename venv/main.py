@@ -1,5 +1,4 @@
 import sys  # sys нужен для передачи argv в QApplication
-import PyQt5
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QApplication, QPushButton, QComboBox, QProgressBar
 from PyQt5.QtGui import QPixmap
 import random
@@ -9,16 +8,13 @@ import cmath
 from PIL import Image
 
 
-class ExampleApp(QWidget):
+class Backpropagation(QWidget):
     def __init__(self):
         super().__init__()
-        self.wh = 50 * 50
-        self.weights_Layer_1 = np.random.normal(0, 0.2, (self.wh, 6))
-        # self.weights_Layer_1 = np.absolute(self.weights_Layer_1)
+        self.width = 50 * 50
+        self.weights_Layer_1 = np.random.normal(0, 0.2, (self.width, 6))
         self.weights_Layer_2 = np.random.normal(0, 0.2, (6, 10))
-        # self.weights_Layer_2 = np.absolute(self.weights_Layer_2)
         self.weights_Layer_output = np.random.normal(0, 0.2, (10, 4))
-        # self.weights_Layer_output = np.absolute(self.weights_Layer_output)
         self.inputs_x = []
         self.baseball = []
         self.archery = []
@@ -40,8 +36,7 @@ class ExampleApp(QWidget):
         layout5 = QVBoxLayout()
         self.btn = QPushButton("Выйти")
         self.comboBox = QComboBox()
-        self.comboBox.addItems(["Стрельба из лука", "Бейсбол",
-                                "Плавание", "Хоккей"])
+        self.comboBox.addItems(["Стрельба из лука", "Бейсбол", "Плавание", "Хоккей"])
         self.progress = QProgressBar()
         self.progress.setMinimum(0)
         self.progress.setMaximum(self.iter * 4)
@@ -60,7 +55,10 @@ class ExampleApp(QWidget):
         self.swimming = self.get_pixel(r'pictures/swimming.bmp')
         self.hockey = self.get_pixel(r'pictures/hockey.bmp')
 
-        self.comboBox.addItems(["Зашумленная стрельба из лука", "Зашумленный бейсбол", "Зашумленное плавание", "Зашумленный хоккей"])
+        self.comboBox.addItems(["Зашумленная стрельба из лука",
+                                "Зашумленный бейсбол",
+                                "Зашумленное плавание",
+                                "Зашумленный хоккей"])
 
         layout2.addWidget(self.comboBox)
         layout2.addWidget(self.label_pic)
@@ -112,7 +110,7 @@ class ExampleApp(QWidget):
         self.inputs_x.append(self.baseball)
         self.inputs_x.append(self.swimming)
         self.inputs_x.append(self.hockey)
-        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.wh, 6))
+        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, 6))
         # self.weights_Layer_1 = np.absolute(self.weights_Layer_1)
         self.predict(self.inputs_x)
         # self.label_predict.text("Обучение закончено")
@@ -129,8 +127,8 @@ class ExampleApp(QWidget):
         img = Image.new('RGB', (50, 50), color=0)
         pix_tmp = data
         k = 0
-        for i in range(int(self.wh ** (0.5))):
-            for j in range(int(self.wh ** (0.5))):
+        for i in range(int(self.width ** (0.5))):
+            for j in range(int(self.width ** (0.5))):
                 if pix_tmp[k] == 1:
                     img.putpixel((i, j), (255, 255, 255))
                 else:
@@ -197,7 +195,7 @@ class ExampleApp(QWidget):
         exit()
 
     def activation(self, x, derive=False):
-        if derive == True:
+        if derive:
             i = 1 / (cmath.cosh(x)) ** 2
             return i.real
         return cmath.tanh(x).real
@@ -206,8 +204,8 @@ class ExampleApp(QWidget):
         temp = data.copy()
         changed = []
         chaff = 0.2
-        for element in range(0, int(self.wh * chaff)):
-            index = random.randint(0, self.wh - 1)
+        for element in range(0, int(self.width * chaff)):
+            index = random.randint(0, self.width - 1)
             if index not in changed:
                 changed.append(index)
                 if index >= temp.count(self):
@@ -225,7 +223,7 @@ class ExampleApp(QWidget):
         picture = Image.open(pic)
         picture = picture.convert('RGB')
         (width, height) = picture.size
-        self.wh = width * height
+        self.width = width * height
         for x in range(width):
             for y in range(height):
                 if picture.getpixel((x, y)) == (255, 255, 255):
@@ -393,7 +391,7 @@ class ExampleApp(QWidget):
 
 def main():
     app = QApplication(sys.argv)  # Новый экземпляр QApplication
-    window = ExampleApp()  # Создаём объект класса ExampleApp
+    window = Backpropagation()  # Создаём объект класса Backpropagation
     window.show()  # Показываем окно
     app.exec_()  # и запускаем приложение
 
