@@ -21,9 +21,9 @@ class Backpropagation(QWidget):
 
         self.hidden_count = math.ceil(math.sqrt(self.input_count * self.output_count)) # количество скрытых нейронов
 
-        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, self.input_count))
-        self.weights_Layer_2 = np.random.normal(0, 0.2, (self.input_count, self.hidden_count))
-        self.weights_Layer_output = np.random.normal(0, 0.2, (self.hidden_count, self.output_count))
+        self.weights_Layer_1 = np.random.normal(0.0, 0.001, (self.width, self.input_count))
+        self.weights_Layer_2 = np.random.normal(0.0, 0.001, (self.input_count, self.hidden_count))
+        self.weights_Layer_output = np.random.normal(0.0, 0.001, (self.hidden_count, self.output_count))
         self.inputs_x = []
         self.baseball = []
         self.archery = []
@@ -196,19 +196,19 @@ class Backpropagation(QWidget):
     def quit(self):
         exit()
 
-    def activation(self, x, derive=False):
-        if derive:
-            i = 1 / (cmath.cosh(x)) ** 2
-            return i.real
-        return cmath.tanh(x).real
-
     # def activation(self, x, derive=False):
     #     if derive:
-    #         return self.sigmoid(x) * (1 - self.sigmoid(x))
-    #     return self.sigmoid(x)
-    #
-    # def sigmoid(self, x):
-    #     return (1 / (1 + np.exp(-x))).real
+    #         i = 1 / (cmath.cosh(x)) ** 2
+    #         return i.real
+    #     return cmath.tanh(x).real
+
+    def activation(self, x, derive=False):
+        # if derive:
+            # return self.sigmoid(x) * (1 - self.sigmoid(x))
+        return self.sigmoid(x)
+
+    def sigmoid(self, x):
+        return (1 / (1 + np.exp(-x))).real
 
     def broke(self, data):
         temp = data.copy()
@@ -309,7 +309,7 @@ class Backpropagation(QWidget):
         output = np.dot(layer_2_output, self.weights_Layer_output)
         output2 = np.array([self.activation(x) for x in output])
         if forward:
-            out = [round(el, 3) for el in output2.real]
+            out = [round(el, 2) for el in output2.real]
             return out
         else:
             return layer_1_output, layer_2_output, output2
@@ -320,25 +320,25 @@ class Backpropagation(QWidget):
         delta = []
         delta_1 = []
         delta_2 = []
-        learn_rate = 0.1
+        learn_rate = 0.5
 
         # ----------------- Вычисление ошибки внешнего слоя ------------------- #
         for n in range(len(output)):
             error.append(y[n] - output[n])
-            delta.append(error[n] * self.activation(output[n], derive=True))
+            delta.append(error[n] * output[n] * (1 - output[n]))
 
             #  ----------------- Вычисление ошибки скрытого слоя ---------------  #
         for k in range(len(layer_2_output)):
             tmp = 0
             for i in range(len(error)):
                 tmp += delta[i] * self.weights_Layer_output[k][i]
-            delta_1.append(tmp * self.activation(layer_2_output[k], derive=True))
+            delta_1.append(tmp * layer_2_output[k] * (1 - layer_2_output[k]))
 
         for k in range(len(layer_1_output)):
             tmp = 0
             for i in range(len(delta_1)):
                 tmp += delta_1[i] * self.weights_Layer_2[k][i]
-            delta_2.append(tmp * self.activation(layer_1_output[k], derive=True))
+            delta_2.append(tmp * layer_1_output[k] * (1 - layer_1_output[k]))
 
             # ------------------ Корректировка весовых коэффициентов --------------------- #
         t = 0
