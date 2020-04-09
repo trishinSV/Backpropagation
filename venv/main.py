@@ -12,14 +12,14 @@ from PIL import Image
 class Backpropagation(QWidget):
     def __init__(self):
         super().__init__()
-        self.width = 0
+        self.width = 50 * 50
         self.input_count = 6
         self.output_count = 4
         # Высчитываем количество нейронов скрытой сети
         # Для этого применяется эвристический метод:
         # k = sqrt(a, b), где k - кол-во скрытых нейронов, a - кол-во нейронов на 1 слое, b - кол-во нейронов на 3 слое
 
-        self.hidden_count = math.ceil(math.sqrt(self.input_count * self.output_count)) # количество скрытых нейронов
+        self.hidden_count = 2 # math.ceil(math.sqrt(self.width * self.output_count)) # количество скрытых нейронов
 
         self.weights_0_1 = np.random.normal(0.0, 2 ** -0.5, (self.hidden_count, self.width))
         # self.weights_Layer_2 = np.random.normal(0, 0.2, (self.input_count, self.hidden_count))
@@ -210,9 +210,6 @@ class Backpropagation(QWidget):
             return self.sigmoid(x) * (1 - self.sigmoid(x))
         return self.sigmoid(x)
 
-
-    # sigmoid_mapper = np.vectorize(sigmoid)  # Для использования векторов
-
     def broke(self, data):
         temp = data.copy()
         changed = []
@@ -315,7 +312,7 @@ class Backpropagation(QWidget):
         output = np.dot(self.weights_1_2, layer_1_output)
         output2 = np.array([self.activation(x) for x in output])
         if forward:
-            out = [round(el, 3) for el in output2.real]
+            out = [round(el, 2) for el in output2.real]
             return out
         else:
             return layer_1_output, output2
@@ -326,7 +323,7 @@ class Backpropagation(QWidget):
         delta = []
         delta_1 = []
         delta_2 = []
-        learn_rate = 0.1
+        learn_rate = 0.5
 
         # ----------------- Вычисление ошибки внешнего слоя ------------------- #
         for n in range(len(output)):
@@ -349,7 +346,7 @@ class Backpropagation(QWidget):
             # ------------------ Корректировка весовых коэффициентов --------------------- #
         t = 0
         for el in self.weights_1_2:
-            for j in range(len(output)):
+            for j in range(len(el)):
                 el[j] += layer_1_output[t] * delta[j] * learn_rate
             t += 1
 
@@ -361,7 +358,7 @@ class Backpropagation(QWidget):
 
         k = 0
         for el1 in self.weights_0_1:
-            for o in range(len(layer_1_output)):
+            for o in range(len(el1)):
                 el1[o] += inputs[k] * delta_2[o] * learn_rate
             k += 1
 
