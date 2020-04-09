@@ -21,7 +21,7 @@ class Backpropagation(QWidget):
 
         self.hidden_count = math.ceil(math.sqrt(self.input_count * self.output_count)) # количество скрытых нейронов
 
-        self.weights_Layer_1 = np.random.normal(0, 0.2, (self.width, self.input_count))
+        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, self.input_count))
         self.weights_Layer_2 = np.random.normal(0, 0.2, (self.input_count, self.hidden_count))
         self.weights_Layer_output = np.random.normal(0, 0.2, (self.hidden_count, self.output_count))
         self.inputs_x = []
@@ -32,11 +32,9 @@ class Backpropagation(QWidget):
         self.error_learn = []
         self.error_test = []
         self.count = 0
-        self.iter = 100
-        self.init_ui()
-        self.combo()
+        self.iter = 1000
 
-    def init_ui(self):
+        # UI
 
         layout2 = QHBoxLayout()
         layout3 = QHBoxLayout()
@@ -86,6 +84,7 @@ class Backpropagation(QWidget):
 
         self.setGeometry(100, 50, 1200, 600)
         self.show()
+        self.combo()
 
     def combo(self):
         self.comboBox.activated[str].connect(self.on_activated)
@@ -108,9 +107,9 @@ class Backpropagation(QWidget):
         self.create_pic(self.broke_swimming, r'pictures/br_swimming.jpg')
         self.create_pic(self.broke_hockey, r'pictures/br_hockey.jpg')
 
-        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, self.input_count))
-        self.weights_Layer_2 = np.random.normal(0, 0.1, (self.input_count, self.hidden_count))
-        self.weights_Layer_output = np.random.normal(0, 0.1, (self.hidden_count, self.output_count))
+        # self.weights_Layer_1 = np.random.normal(0, 3, (self.width, self.input_count))
+        # self.weights_Layer_2 = np.random.normal(0, 3, (self.input_count, self.hidden_count))
+        # self.weights_Layer_output = np.random.normal(0, 3, (self.hidden_count, self.output_count))
 
         self.inputs_x.append(self.archery)
         self.inputs_x.append(self.baseball)
@@ -197,20 +196,19 @@ class Backpropagation(QWidget):
     def quit(self):
         exit()
 
-    # def activation(self, x, derive=False):
-    #     if derive:
-    #         i = 1 / (cmath.cosh(x)) ** 2
-    #         return i.real
-    #     return cmath.tanh(x).real
     def activation(self, x, derive=False):
         if derive:
-            return np.exp(-x)/((1 + np.exp(-x)) ** 2)
-        return (1 / (1 + np.exp(-x)))
+            i = 1 / (cmath.cosh(x)) ** 2
+            return i.real
+        return cmath.tanh(x).real
 
-    def sigmoid(x):
-        return 1 / (1 + np.exp(-x))
-
-    # sigmoid_mapper = np.vectorize(sigmoid)  # Для использования векторов
+    # def activation(self, x, derive=False):
+    #     if derive:
+    #         return self.sigmoid(x) * (1 - self.sigmoid(x))
+    #     return self.sigmoid(x)
+    #
+    # def sigmoid(self, x):
+    #     return (1 / (1 + np.exp(-x))).real
 
     def broke(self, data):
         temp = data.copy()
@@ -245,8 +243,6 @@ class Backpropagation(QWidget):
         return inputs_data
 
     def predict(self, X):
-        func_error = []
-        test_error = []
         self.count = 0
         s = 1
         tmp_error = 0
@@ -282,10 +278,9 @@ class Backpropagation(QWidget):
                 for i in range(len(broken_error)):
                     tmp += ([0, 0, 0, 1][i] - broken_error[i]) ** 2
 
-                test_error.append(tmp)
                 tmp_error2 += tmp
                 temp = self.learn(ele, layer_1_output, layer_2_output, output2, y1)
-                func_error.append(temp)
+
                 tmp_error += temp
                 s += 1
                 self.count += 1

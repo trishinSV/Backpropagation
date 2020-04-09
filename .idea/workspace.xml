@@ -4,6 +4,14 @@
     <list default="true" id="55bc7dce-3ca6-48d6-bed0-90fbebc878e7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/archery.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/baseball.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/br_archery.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/br_baseball.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/br_hockey.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/br_swimming.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/hockey.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pictures/swimming.jpg" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,6 +21,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/BackpropagationExample$main.coverage" NAME="main Coverage Results" MODIFIED="1584047262522" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv" />
+    <SUITE FILE_PATH="coverage/Backpropagation$main.coverage" NAME="main Coverage Results" MODIFIED="1586457478755" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv" />
     <SUITE FILE_PATH="coverage/BackpropagationExample$source.coverage" NAME="source Coverage Results" MODIFIED="1582219086413" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv" />
   </component>
   <component name="FUSProjectUsageTrigger">
@@ -63,20 +72,21 @@
     <session id="2123984530">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="21" />
-          <entry key="py" value="15" />
+          <entry key="py" value="345" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="21" />
-          <entry key="Python" value="15" />
+          <entry key="Python" value="345" />
         </counts>
       </usages-collector>
     </session>
@@ -86,11 +96,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="197" column="18" lean-forward="true" selection-start-line="197" selection-start-column="18" selection-end-line="197" selection-end-column="18" />
-              <folding>
-                <element signature="e#0#56#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-271">
+              <caret line="24" column="54" selection-start-line="24" selection-start-column="54" selection-end-line="24" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -106,20 +113,13 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tmp_error</find>
-      <find>curve2</find>
-      <find>self.weights_Layer_1 =</find>
-      <find>self.weights_Layer_1</find>
-      <find>fow(</find>
       <find>random_plot</find>
-      <find>func_error</find>
       <find>0.2</find>
       <find>broke_hockey</find>
       <find>0.1</find>
       <find>andom.normal</find>
       <find>error_learn</find>
       <find>0</find>
-      <find>error_test</find>
       <find>random.normal</find>
       <find>check</find>
       <find>predict</find>
@@ -127,8 +127,6 @@
       <find>show</find>
       <find>learn</find>
       <find>wh</find>
-      <find>fow</find>
-      <find>test_error</find>
       <find>tmp_error2</find>
       <find>activation</find>
       <find>** 2</find>
@@ -136,6 +134,15 @@
       <find>print</find>
       <find>Backpropagation</find>
       <find>on_activated</find>
+      <find>error_test</find>
+      <find>test_error</find>
+      <find>func_error</find>
+      <find>fow(</find>
+      <find>fow</find>
+      <find>broke_archery</find>
+      <find>activation(</find>
+      <find>plot</find>
+      <find>self.random_plot()</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -155,7 +162,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="width" value="1280" />
     <option name="height" value="800" />
   </component>
@@ -172,17 +179,17 @@
         <subPane>
           <expand>
             <path>
-              <item name="BackpropagationExample" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BackpropagationExample" type="462c0819:PsiDirectoryNode" />
+              <item name="Backpropagation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Backpropagation" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="BackpropagationExample" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BackpropagationExample" type="462c0819:PsiDirectoryNode" />
+              <item name="Backpropagation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Backpropagation" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="BackpropagationExample" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BackpropagationExample" type="462c0819:PsiDirectoryNode" />
+              <item name="Backpropagation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Backpropagation" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="pictures" type="462c0819:PsiDirectoryNode" />
             </path>
@@ -309,16 +316,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="954" height="1200" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49838188" visible="true" weight="0.4473684" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49838188" visible="true" weight="0.2087327" />
       <window_info id="Structure" order="1" sideWeight="0.50161815" side_tool="true" weight="0.17528272" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.08025682" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2109589" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.48053098" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32876712" />
@@ -328,7 +334,7 @@
       <window_info anchor="bottom" id="Database Changes" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.32876712" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="13" weight="0.2460177" />
+      <window_info anchor="bottom" id="Python Console" order="13" visible="true" weight="0.2460177" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -354,11 +360,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="197" column="18" lean-forward="true" selection-start-line="197" selection-start-column="18" selection-end-line="197" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#56#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-271">
+          <caret line="24" column="54" selection-start-line="24" selection-start-column="54" selection-end-line="24" selection-end-column="54" />
         </state>
       </provider>
     </entry>
