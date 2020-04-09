@@ -1,10 +1,11 @@
-import sys  # sys нужен для передачи argv в QApplication
+import sys
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QApplication, QPushButton, QComboBox, QProgressBar
 from PyQt5.QtGui import QPixmap
 import random
 import pyqtgraph as pg
 import numpy as np
 import cmath
+import math
 from PIL import Image
 
 
@@ -12,9 +13,17 @@ class Backpropagation(QWidget):
     def __init__(self):
         super().__init__()
         self.width = 50 * 50
-        self.weights_Layer_1 = np.random.normal(0, 0.2, (self.width, 6))
-        self.weights_Layer_2 = np.random.normal(0, 0.2, (6, 10))
-        self.weights_Layer_output = np.random.normal(0, 0.2, (10, 4))
+        self.input_count = 6
+        self.output_count = 4
+        # Высчитываем количество нейронов скрытой сети
+        # Для этого применяется эвристический метод:
+        # k = sqrt(a, b), где k - кол-во скрытых нейронов, a - кол-во нейронов на 1 слое, b - кол-во нейронов на 3 слое
+
+        self.hidden_count = math.ceil(math.sqrt(self.input_count * self.output_count)) # количество скрытых нейронов
+
+        self.weights_Layer_1 = np.random.normal(0, 0.2, (self.width, self.input_count))
+        self.weights_Layer_2 = np.random.normal(0, 0.2, (self.input_count, self.hidden_count))
+        self.weights_Layer_output = np.random.normal(0, 0.2, (self.hidden_count, self.output_count))
         self.inputs_x = []
         self.baseball = []
         self.archery = []
@@ -99,25 +108,21 @@ class Backpropagation(QWidget):
         self.create_pic(self.broke_swimming, r'pictures/br_swimming.jpg')
         self.create_pic(self.broke_hockey, r'pictures/br_hockey.jpg')
 
-        # self.weights_Layer_2 = ((np.random.normal(0, 0.1) for x in range(6-1) for i in range(40-1)))
-        self.weights_Layer_2 = np.random.normal(0, 0.1, (6, 10))
-        # self.weights_Layer_2 = np.absolute(self.weights_Layer_2)
+        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, self.input_count))
+        self.weights_Layer_2 = np.random.normal(0, 0.1, (self.input_count, self.hidden_count))
+        self.weights_Layer_output = np.random.normal(0, 0.1, (self.hidden_count, self.output_count))
 
-        self.weights_Layer_output = np.random.normal(0, 0.1, (10, 4))
-        # self.weights_Layer_output = np.absolute(self.weights_Layer_output)
         self.inputs_x.append(self.archery)
         self.inputs_x.append(self.baseball)
         self.inputs_x.append(self.swimming)
         self.inputs_x.append(self.hockey)
-        self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, 6))
-        # self.weights_Layer_1 = np.absolute(self.weights_Layer_1)
+
         self.predict(self.inputs_x)
         self.random_plot()
         self.error_learn = []
         self.error_test = []
 
     def random_plot(self):
-        # random_array = np.array([self.activation(x) for x in range(-10, 10, 1)])
         self.curve.setData(self.error_learn)
         self.curve2.setData(self.error_test)
 
@@ -192,11 +197,20 @@ class Backpropagation(QWidget):
     def quit(self):
         exit()
 
+    # def activation(self, x, derive=False):
+    #     if derive:
+    #         i = 1 / (cmath.cosh(x)) ** 2
+    #         return i.real
+    #     return cmath.tanh(x).real
     def activation(self, x, derive=False):
         if derive:
-            i = 1 / (cmath.cosh(x)) ** 2
-            return i.real
-        return cmath.tanh(x).real
+            return np.exp(-x)/((1 + np.exp(-x)) ** 2)
+        return (1 / (1 + np.exp(-x)))
+
+    def sigmoid(x):
+        return 1 / (1 + np.exp(-x))
+
+    # sigmoid_mapper = np.vectorize(sigmoid)  # Для использования векторов
 
     def broke(self, data):
         temp = data.copy()
@@ -289,30 +303,14 @@ class Backpropagation(QWidget):
     def fow(self, inputs, forward=False):
 
         # Первый слой
-        # for i in range(self.weights_Layer_1.shape[1]):
-        #     layer_1_input.append(inputs[0] * self.weights_Layer_1[0][i])
-        #     for j in range(len(inputs) - 1):
-        #         layer_1_input[i] += inputs[j + 1] * self.weights_Layer_1[j + 1][i]
         layer_1_input = np.dot(inputs, self.weights_Layer_1)
         layer_1_output = np.array([self.activation(x) for x in layer_1_input])
 
         # Второй слой
-        """
-        for i in range(self.weights_Layer_2.shape[1]):
-            Layer_2_input.append(layer_1_output[0] * self.weights_Layer_2[0][i])
-            for j in range(len(layer_1_output) - 1):
-                Layer_2_input[i] += layer_1_output[j + 1] * self.weights_Layer_2[j + 1][i]
-        """
         layer_2_input = np.dot(layer_1_output, self.weights_Layer_2)
         layer_2_output = np.array([self.activation(x) for x in layer_2_input])
 
         # Третий слой
-        """
-        for i in range(self.weights_Layer_output.shape[1]):
-            output.append(layer_2_output[0] * self.weights_Layer_output[0][i])
-            for j in range(len(layer_2_output) - 1):
-                output[i] += layer_2_output[j + 1] * self.weights_Layer_output[j + 1][i]
-        """
         output = np.dot(layer_2_output, self.weights_Layer_output)
         output2 = np.array([self.activation(x) for x in output])
         if forward:
@@ -328,9 +326,8 @@ class Backpropagation(QWidget):
         delta_1 = []
         delta_2 = []
         learn_rate = 0.1
-        ## --------------------------------  Обучение методом !"№"!; --------------------------------- ##
 
-        ##----------------- Вычисление ошибки внешнего слоя -------------------##
+        # ----------------- Вычисление ошибки внешнего слоя ------------------- #
         for n in range(len(output)):
             error.append(y[n] - output[n])
             delta.append(error[n] * self.activation(output[n], derive=True))
@@ -348,7 +345,7 @@ class Backpropagation(QWidget):
                 tmp += delta_1[i] * self.weights_Layer_2[k][i]
             delta_2.append(tmp * self.activation(layer_1_output[k], derive=True))
 
-            ##------------------ Корректировка весовых коэффициентов --------------------- ##
+            # ------------------ Корректировка весовых коэффициентов --------------------- #
         t = 0
         for el in self.weights_Layer_output:
             for j in range(len(output)):
@@ -375,11 +372,10 @@ class Backpropagation(QWidget):
 
 
 def main():
-    app = QApplication(sys.argv)  # Новый экземпляр QApplication
-    window = Backpropagation()  # Создаём объект класса Backpropagation
-    window.show()  # Показываем окно
-    app.exec_()  # и запускаем приложение
+    app = QApplication(sys.argv)
+    window = Backpropagation()
+    window.show()
+    app.exec_()
 
-
-if __name__ == '__main__':  # Если мы запускаем файл напрямую, а не импортируем
-    main()  # то запускаем функцию main()
+if __name__ == '__main__':
+    main()
