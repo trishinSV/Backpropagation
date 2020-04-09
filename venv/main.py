@@ -21,10 +21,9 @@ class Backpropagation(QWidget):
         self.swimming = []
         self.hockey = []
         self.error_learn = []
-        self.test_error = []
         self.error_test = []
         self.count = 0
-        self.iter = 500
+        self.iter = 100
         self.init_ui()
         self.combo()
 
@@ -113,7 +112,6 @@ class Backpropagation(QWidget):
         self.weights_Layer_1 = np.random.normal(0, 0.1, (self.width, 6))
         # self.weights_Layer_1 = np.absolute(self.weights_Layer_1)
         self.predict(self.inputs_x)
-        # self.label_predict.text("Обучение закончено")
         self.random_plot()
         self.error_learn = []
         self.error_test = []
@@ -158,28 +156,28 @@ class Backpropagation(QWidget):
 
     def predict_pic(self):
         if self.comboBox.currentIndex() == 0:
-            out = self.fow(self.archery, pr=True)
+            out = self.fow(self.archery, forward=True)
             y = [1, 0, 0, 0]
         if self.comboBox.currentIndex() == 1:
-            out = self.fow(self.baseball, pr=True)
+            out = self.fow(self.baseball, forward=True)
             y = [0, 1, 0, 0]
         if self.comboBox.currentIndex() == 2:
-            out = self.fow(self.swimming, pr=True)
+            out = self.fow(self.swimming, forward=True)
             y = [0, 0, 1, 0]
         if self.comboBox.currentIndex() == 3:
-            out = self.fow(self.hockey, pr=True)
+            out = self.fow(self.hockey, forward=True)
             y = [0, 0, 0, 1]
         if self.comboBox.currentIndex() == 4:
-            out = self.fow(self.broke_archery, pr=True)
+            out = self.fow(self.broke_archery, forward=True)
             y = [1, 0, 0, 0]
         if self.comboBox.currentIndex() == 5:
-            out = self.fow(self.broke_baseball, pr=True)
+            out = self.fow(self.broke_baseball, forward=True)
             y = [0, 1, 0, 0]
         if self.comboBox.currentIndex() == 6:
-            out = self.fow(self.broke_swimming, pr=True)
+            out = self.fow(self.broke_swimming, forward=True)
             y = [0, 0, 1, 0]
         if self.comboBox.currentIndex() == 7:
-            out = self.fow(self.broke_hockey, pr=True)
+            out = self.fow(self.broke_hockey, forward=True)
             y = [0, 0, 0, 1]
         if out.index(max(out)) == 0:
             self.label_pract.setText("Полученное значение на выходе:" + str(out))
@@ -234,7 +232,7 @@ class Backpropagation(QWidget):
 
     def predict(self, X):
         func_error = []
-        self.test_error = []
+        test_error = []
         self.count = 0
         s = 1
         tmp_error = 0
@@ -242,7 +240,6 @@ class Backpropagation(QWidget):
         for g in range(self.iter):
             for ele in X:
                 tmp = 0
-                y2 = [1, 0, 0, 0]
                 if s == 1:
                     y1 = np.array([1, 0, 0, 0])
                 elif s == 2:
@@ -254,22 +251,24 @@ class Backpropagation(QWidget):
                     s = 0
 
                 layer_1_output, layer_2_output, output2 = self.fow(ele)
-                br_er = self.fow(self.broke_archery, pr=True)
-                for i in range(len(br_er)):
-                    tmp += (y2[i] - br_er[i]) ** 2
-                br_er = self.fow(self.broke_baseball, pr=True)
-                for i in range(len(br_er)):
-                    tmp += ([0, 1, 0, 0][i] - br_er[i]) ** 2
 
-                br_er = self.fow(self.broke_swimming, pr=True)
-                for i in range(len(br_er)):
-                    tmp += ([0, 0, 1, 0][i] - br_er[i]) ** 2
+                broken_error = self.fow(self.broke_archery, forward=True)
+                for i in range(len(broken_error)):
+                    tmp += ([1, 0, 0, 0][i] - broken_error[i]) ** 2
 
-                br_er = self.fow(self.broke_hockey, pr=True)
-                for i in range(len(br_er)):
-                    tmp += ([0, 0, 0, 1][i] - br_er[i]) ** 2
+                broken_error = self.fow(self.broke_baseball, forward=True)
+                for i in range(len(broken_error)):
+                    tmp += ([0, 1, 0, 0][i] - broken_error[i]) ** 2
 
-                self.test_error.append(tmp)
+                broken_error = self.fow(self.broke_swimming, forward=True)
+                for i in range(len(broken_error)):
+                    tmp += ([0, 0, 1, 0][i] - broken_error[i]) ** 2
+
+                broken_error = self.fow(self.broke_hockey, forward=True)
+                for i in range(len(broken_error)):
+                    tmp += ([0, 0, 0, 1][i] - broken_error[i]) ** 2
+
+                test_error.append(tmp)
                 tmp_error2 += tmp
                 temp = self.learn(ele, layer_1_output, layer_2_output, output2, y1)
                 func_error.append(temp)
@@ -287,21 +286,7 @@ class Backpropagation(QWidget):
         self.error_learn = []
         self.error_test = []
 
-        tmp_error = 0
-        tmp_error2 = 0
-        # for i in range(len(func_error)):
-        #     tmp_error += func_error[i]
-        #     tmp_error2 += self.test_error[i]
-        #     if ((i + 1) % 4) == 0:
-        #         self.error_learn.append(tmp_error)
-        #         self.error_test.append(tmp_error2)
-        #         tmp_error = 0
-        #         tmp_error2 = 0
-
-    def fow(self, inputs, pr=False):
-        layer_1_input = []
-        layer_2_input = []
-        output = []
+    def fow(self, inputs, forward=False):
 
         # Первый слой
         # for i in range(self.weights_Layer_1.shape[1]):
@@ -330,8 +315,8 @@ class Backpropagation(QWidget):
         """
         output = np.dot(layer_2_output, self.weights_Layer_output)
         output2 = np.array([self.activation(x) for x in output])
-        if pr:
-            out = [round(el, 2) for el in output2.real]
+        if forward:
+            out = [round(el, 3) for el in output2.real]
             return out
         else:
             return layer_1_output, layer_2_output, output2
@@ -342,7 +327,7 @@ class Backpropagation(QWidget):
         delta = []
         delta_1 = []
         delta_2 = []
-        learn_rate = 0.04
+        learn_rate = 0.1
         ## --------------------------------  Обучение методом !"№"!; --------------------------------- ##
 
         ##----------------- Вычисление ошибки внешнего слоя -------------------##
@@ -363,7 +348,7 @@ class Backpropagation(QWidget):
                 tmp += delta_1[i] * self.weights_Layer_2[k][i]
             delta_2.append(tmp * self.activation(layer_1_output[k], derive=True))
 
-            ##------------------ Корректировка весов --------------------- ##
+            ##------------------ Корректировка весовых коэффициентов --------------------- ##
         t = 0
         for el in self.weights_Layer_output:
             for j in range(len(output)):
